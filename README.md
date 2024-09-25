@@ -1,13 +1,10 @@
 # SporkV2
-**A LLM powered Chatbot for VR-Chat.**
+**A Chatbot for VR-Chat powered by a local llm.**
 
 Version two of Spork aims to be a simple and easy to use AI Chatbot for VR-Chat. It uses koboldcpp for the llm-backend and requires it to be set up and ready for api calls.
 
-**Code clean-up to do:**
--  The code is still to be refactored
--  and configurational strings to be listed in a configuration file.
--  The generated voice of the bot as well as the conversation history is to be placed in the chatbot's root folder and not in the user's personal folder (c:\users\user_name).
+I have not yet decided on a tts-backend to use for an optimal quality-to-speed ratio.
 
 **Features to add:**
--  open ai tts branch
+-  open ai tts branch and possibly other branches
 -  virtual microphone and speaker for use with a VR-Chat account and client dedicated to the chatbot
