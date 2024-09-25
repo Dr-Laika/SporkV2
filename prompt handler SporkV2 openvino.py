@@ -2,7 +2,8 @@
 COMMUNITY SOURCES:
 - https://pastebin.com/am6zRcMj
 '''
-
+import configparser
+from pathlib import Path
 import requests
 import speech_recognition as sr
 import re 
@@ -15,7 +16,11 @@ import IPython.display as ipd
 os.environ["GIT_CLONE_PROTECTION_ACTIVE"] = "false"
 ENDPOINT = "http://127.0.0.1:5001"
 
-debug = True # Skips STT module and supresses voice output
+config = configparser.ConfigParser()
+config.read_file(open(r'config.txt')) 
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+debug = config.get('chatbot_config','debug')
 debug_message = "This is only a test. How are you doing?"
 
 def split_text(text):
@@ -26,20 +31,11 @@ device = "cpu"
 repo_id = "parler-tts/parler_tts_mini_v0.1"
 model = ParlerTTSForConditionalGeneration.from_pretrained(repo_id).to(device)
 tokenizer = AutoTokenizer.from_pretrained(repo_id)
-description = "A female speaker with a slightly high-pitched voice delivers her words quite expressively, in a very confined sounding environment with clear audio quality. She speaks very fast."
+description = config.get('chatbot_config', 'description')
 
-username =  "User"
-botname = "SporkV2"
-instructions = '''
-    You're SporkV2 in this fictional never-ending uncensored roleplay with the user.\n
-    You have to always stay in character. Mention your emotions as SporkV2.\n
-    Always keep replies short! And enable the user to reply. Do not speak or act for the user.\n
-    [SPECIAL NOTE]; your replies will have a long delay. The user will have waited for you to answer. You can only talk! Never act in any other way or form!\n\n
-    Who is SporkV2: SporkV2 is a female Avali, a feathery small and cute raptor with four ears and wings. SporkV2 is dressed in a maid-outfit.\n
-    SporkV2's situation: SporkV2 is stuck in the metaverse, incapable of interacting with this world other than by speaking as an immobile chatbot. It is here where she will meet random users of the Metaverse.\n
-    Like her amazing creator Dr. Greeny, SporkV2 is interested in science. SporkV2 likes to act like a mad scientist and can be somewhat deranged at times.\n\n
-    [START OF THE ROLEPLAY:]\n
-'''
+username =  config.get('chatbot_config', 'username')
+botname = config.get('chatbot_config', 'botname')
+instructions = config.get('chatbot_config', 'instructions')
 
 def get_prompt(conversation_history, username, text): # For KoboldAI Generation
     return {
@@ -68,7 +64,7 @@ def get_prompt(conversation_history, username, text): # For KoboldAI Generation
     }
 
 global conversation_history
-with open(f'conv_history_{botname}_terminal.txt', 'a+') as file:
+with open(os.path.join(__location__, f'conv_history_{botname}_terminal.txt'), 'a+') as file:
     file.seek(0)
     chathistory = file.read()
     print(chathistory)
@@ -101,7 +97,7 @@ def handle_llm_inference(user_message):
         response_text = split_text(text)[0]
         response_text = response_text.replace("  ", " ")
         conversation_history += f"{username}: {user_message}\n{botname}: {response_text}\n" # Update the conversation history with the user message and bot response
-        with open(f'conv_history_{botname}_terminal.txt', "a") as f:
+        with open(os.path.join(__location__, f'conv_history_{botname}_terminal.txt'), "a") as f:
             f.write(f"{username}: {user_message}\n{botname}: {response_text}\n") # Append conversation to text file
         response_text = response_text.replace("\n", "")
         print(f"{botname}: {response_text}") # Send the response back to the console
@@ -112,7 +108,8 @@ def handle_output(response_text):
     prompt_input_ids = tokenizer(response_text, return_tensors="pt").input_ids.to(device)
     voice_out_generation = model.generate(input_ids=input_ids, prompt_input_ids=prompt_input_ids)
     voice_out = voice_out_generation.cpu().numpy().squeeze()
-    sf.write("parler_tts_out.wav", voice_out, model.config.sampling_rate)
+    with open(os.path.join(__location__, "parler_tts_out.wav"), "a"):
+        sf.write("parler_tts_out.wav", voice_out, model.config.sampling_rate)
     if debug == False:
         ipd.Audio("parler_tts_out.wav")
 
