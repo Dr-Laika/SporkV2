@@ -3,7 +3,6 @@ COMMUNITY SOURCES:
 - https://pastebin.com/am6zRcMj
 '''
 import configparser
-from pathlib import Path
 import requests
 import speech_recognition as sr
 import re 
@@ -21,7 +20,7 @@ config.read_file(open(r'config.txt'))
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 debug = config.get('chatbot_config','debug')
-debug_message = "This is only a test. How are you doing?"
+debug_message = "I am testing your capabilities of listening and answering. How are you doing, Spork?"
 
 def split_text(text):
     parts = re.split(r'\n[a-zA-Z]', text)
@@ -112,6 +111,7 @@ def handle_output(response_text):
         sf.write("parler_tts_out.wav", voice_out, model.config.sampling_rate)
     if debug == False:
         ipd.Audio("parler_tts_out.wav")
+
 
 while True:
     handle_input()
