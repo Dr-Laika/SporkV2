@@ -10,4 +10,4 @@ I have not yet decided on a tts-backend to use for the optimal quality-to-speed 
 
 **Features to add:**
 -   virtual microphone and speaker for use with a VR-Chat account and client dedicated to the chatbot
--   lm powered creation of a summarized conversation context
+-   llm powered creation of a summarized conversation context
