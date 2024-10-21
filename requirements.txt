@@ -1,0 +1,6 @@
+requests
+git+https://github.com/huggingface/parler-tts.git
+soundfile
+IPython
+SpeechRecognition 
+pydub
