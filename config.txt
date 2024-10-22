@@ -21,4 +21,4 @@ instructions =
     [START OF THE ROLEPLAY:]\n
 
 # Skips STT module and supresses voice output
-debug = True
+debug = False
